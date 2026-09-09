@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Wireless Arcade 01 — Web Flasher</title>
+<script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js"></script>
+<style>
+  :root {
+    --bg:#0a0e0d; --panel:#111917; --panel-2:#0d1412; --border:#22322e;
+    --text:#eef1ee; --text-dim:#93a29c; --accent:#38e0c7; --accent-dim:#1c6459;
+    --display: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    --body-font: ui-serif, Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+    --mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; font-family:var(--body-font); background:var(--bg); color:var(--text);
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .card {
+    background:var(--panel); border:1px solid var(--border); border-radius:4px;
+    padding:36px; max-width:480px; width:100%;
+  }
+  .eyebrow {
+    font-family:var(--mono); font-size:.72rem; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--accent-dim); margin-bottom:10px;
+  }
+  h1 {
+    font-family:var(--display); font-weight:700; letter-spacing:.5px;
+    margin:0 0 14px; font-size:2rem; line-height:1.2; color:var(--text);
+  }
+  .sub { color:var(--text-dim); font-size:.95rem; line-height:1.6; margin-bottom:28px; }
+  ol { color:var(--text-dim); font-size:.88rem; line-height:1.75; padding-left:1.2rem; margin:22px 0; font-family:var(--body-font); }
+  ol b { color:var(--text); }
+  button[slot="activate"] {
+    width:100%; padding:14px; border:none; border-radius:2px; background:var(--accent); color:#04140f;
+    font-family:var(--mono); font-size:.85rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
+    cursor:pointer; margin-top:8px;
+  }
+  button[slot="activate"]:hover { opacity:.88; }
+  [slot="unsupported"], [slot="not-allowed"] { display:block; color:#e0666a; font-size:.85rem; margin-top:8px; font-family:var(--body-font); }
+  footer {
+    color:var(--text-dim); font-size:.72rem; font-family:var(--mono); letter-spacing:.3px;
+    margin-top:28px; text-align:center; line-height:1.8; border-top:1px solid var(--border); padding-top:16px;
+  }
+  footer a { color:var(--accent); text-decoration:none; }
+  footer a:hover { text-decoration:underline; }
+  .trouble {
+    background:var(--panel-2); border:1px solid var(--border); border-left:3px solid var(--accent-dim);
+    padding:14px 16px; margin-top:18px; font-size:.83rem; color:var(--text-dim); line-height:1.6; font-family:var(--body-font);
+  }
+  .trouble b { color:var(--text); }
+  .trouble button {
+    background:var(--border); color:var(--text); border:none; border-radius:2px; padding:6px 12px;
+    font-family:var(--mono); font-size:.75rem; letter-spacing:.3px; text-transform:uppercase;
+    cursor:pointer; margin-top:10px;
+  }
+  .trouble button:hover { opacity:.85; }
+  .gate {
+    background:var(--panel-2); border:1px solid var(--border); padding:18px; margin-bottom:24px;
+  }
+  .gate p { font-size:.85rem; color:var(--text-dim); margin:0 0 12px; line-height:1.6; font-family:var(--body-font); }
+  .gate a { color:var(--accent); }
+  .gate-row { display:flex; gap:8px; }
+  .gate-row input[type=text] {
+    flex:1; padding:10px 12px; border-radius:2px; border:1px solid var(--border);
+    background:var(--bg); color:var(--text); font-family:var(--mono); font-size:.82rem; outline:none;
+  }
+  .gate-row input[type=text]:focus { border-color:var(--accent); }
+  .gate-row button {
+    padding:10px 16px; border:none; border-radius:2px; background:var(--border); color:var(--text);
+    font-family:var(--mono); font-size:.78rem; letter-spacing:.3px; text-transform:uppercase;
+    cursor:pointer; white-space:nowrap;
+  }
+  .gate-row button:hover { opacity:.85; }
+  .gate-row button:disabled { opacity:.5; cursor:default; }
+  #gate-msg { font-size:.8rem; margin-top:10px; min-height:1.2em; font-family:var(--body-font); }
+  #gate-msg.ok { color:var(--accent); }
+  #gate-msg.err { color:#e0666a; }
+  esp-web-install-button { display:none; }
+  esp-web-install-button.unlocked { display:block; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="eyebrow">AutoMate Vol.1 // LPA-03 [Wireless Arcade 01]</div>
+    <h1>Wireless Arcade 01</h1>
+    <div class="sub">A local-network arcade in your pocket. Eight 8-bit games, no internet, no app. Flash it straight from this browser.</div>
+
+    <div class="gate">
+      <p>Enter the license key from your Gumroad receipt to unlock flashing.
+        Haven't bought it yet? <a href="#" id="buy-link">Get it here</a> first.</p>
+      <div class="gate-row">
+        <input type="text" id="license-input" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX"
+               onkeydown="if(event.key==='Enter')verifyLicenseKey()">
+        <button id="verify-btn" onclick="verifyLicenseKey()">Verify</button>
+      </div>
+      <div id="gate-msg"></div>
+    </div>
+
+    <ol>
+      <li>Plug your ESP32-S3 board into this computer over <b>USB</b>.</li>
+      <li>Click <b>Connect &amp; Install</b> below, then <b>press and hold the BOOT
+          button</b> on your board right away &mdash; keep holding it.</li>
+      <li>Pick your board's port from the browser's popup list. Keep holding BOOT
+          until you see it actually start writing (a progress bar/percentage) &mdash;
+          <i>then</i> let go.</li>
+      <li>Wait for flashing to finish (about 30&ndash;60 seconds) &mdash; don't unplug.</li>
+      <li>Once done, look for <b>&quot;ARCADE 01&quot;</b> in your Wi-Fi list and connect &mdash;
+          the games load automatically. If nothing pops up within a few seconds,
+          check <b>Settings &rarr; Wi-Fi &rarr; &#9432;</b> next to the network and make
+          sure <b>Auto-Login</b> is on (this can get switched off if your phone's
+          joined this network before), or open a browser and go to
+          <b>http://192.168.4.1</b>.</li>
+    </ol>
+
+    <esp-web-install-button manifest="manifest.json">
+      <button slot="activate">Connect &amp; Install</button>
+      <span slot="unsupported">
+        Your browser doesn't support Web Serial. Use a recent <b>Chrome</b> or <b>Edge</b> on desktop
+        (mobile browsers and Firefox/Safari aren't supported by this flashing method).
+      </span>
+      <span slot="not-allowed">
+        This page needs to be served over HTTPS (or from <code>localhost</code>) for the browser to
+        allow USB access &mdash; check how you're opening this page.
+      </span>
+    </esp-web-install-button>
+
+    <div class="trouble">
+      <b>Stuck on "Connecting…" or it failed partway?</b> Ensure to press BOOT before flashing.
+      <br><button onclick="location.reload()">Reload this page</button>
+    </div>
+
+    <footer>
+      WIRELESS ARCADE 01 &middot; AUTOMATE VOL.1 &middot; BY WHIZ WORKS<br>
+      not licensed for use without purchase
+    </footer>
+  </div>
+
+<script>
+  const WORKER_URL = "PASTE_DEPLOYED_WORKER_URL_HERE";
+
+  async function verifyLicenseKey() {
+    const input = document.getElementById('license-input');
+    const btn = document.getElementById('verify-btn');
+    const msg = document.getElementById('gate-msg');
+    const key = input.value.trim();
+
+    if (!key) { msg.textContent = 'Enter your license key first.'; msg.className = 'err'; return; }
+
+    btn.disabled = true; btn.textContent = 'Checking…';
+    msg.textContent = ''; msg.className = '';
+
+    try {
+      const r = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ license_key: key }),
+      });
+      const data = await r.json();
+
+      if (data.valid) {
+        msg.textContent = '✓ Verified — you\'re good to flash.';
+        msg.className = 'ok';
+        document.querySelector('esp-web-install-button').classList.add('unlocked');
+        input.disabled = true;
+      } else {
+        msg.textContent = 'That key didn\'t verify. Double-check it against your Gumroad receipt.';
+        msg.className = 'err';
+      }
+    } catch (e) {
+      msg.textContent = 'Could not reach the verification service — try again in a moment.';
+      msg.className = 'err';
+    } finally {
+      btn.disabled = false; btn.textContent = 'Verify';
+    }
+  }
+</script>
+</body>
+</html>

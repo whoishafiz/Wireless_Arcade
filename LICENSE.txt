@@ -1,0 +1,27 @@
+Wireless Arcade 01 — Web Flasher
+Copyright (c) 2026 Hafizuddin Maiddin (Whiz Works). All rights reserved.
+
+This repository is published only so a browser can fetch the files needed for
+ESP Web Tools to flash a device over USB — that is the sole reason its
+contents are network-reachable. Being reachable does not grant a license.
+
+NO LICENSE IS GRANTED to any of the following, to anyone who has not
+purchased Wireless Arcade 01 through its official Gumroad listing:
+  - firmware.bin, bootloader.bin, partition-table.bin — the compiled Wireless
+    Arcade 01 firmware. Downloading, flashing, copying, redistributing, or
+    otherwise using these files without a valid purchase is not authorized.
+  - The Wireless Arcade 01 name, UI, and product design embodied in the
+    firmware.
+
+Licensed buyers: your Gumroad purchase grants you a personal license to flash
+and run this firmware on hardware you own. See the product's private source
+repository for full terms.
+
+install.html and manifest.json (the flasher page itself) contain no
+proprietary logic of their own — they are a thin ESP Web Tools integration
+and may be reused for your own unrelated ESP32 projects. This permission
+does NOT extend to the .bin files in this repository.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. IN NO EVENT
+SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING
+FROM THE USE OF THIS SOFTWARE, INCLUDING HARDWARE DAMAGE FROM FLASHING.
