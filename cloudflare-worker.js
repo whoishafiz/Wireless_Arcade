@@ -24,15 +24,16 @@
  * endpoint once with the permalink and any key, and it echoes back the
  * required product_id directly.
  *
- * NOTE: no Gumroad listing exists for Wireless Arcade 01 yet, so
- * GUMROAD_PRODUCT_ID below is a placeholder. See flasher/README.md for the
- * exact remaining setup steps.
+ * Gumroad listing: https://whizworks.gumroad.com/l/twedq (live 2026-09-15).
+ * See flasher/README.md for the remaining setup steps (deploy this Worker,
+ * paste its URL into install.html).
  */
 
 // Public info, not a secret — this product's Gumroad product_id (not the
 // permalink; see the IMPORTANT note above for why that distinction matters).
-// PLACEHOLDER — replace once the Gumroad listing exists (see flasher/README.md).
-const GUMROAD_PRODUCT_ID = "GUMROAD_PRODUCT_ID_PLACEHOLDER";
+// Read from the product page's own embedded JSON (permalink "twedq" ->
+// product.id), 2026-09-15.
+const GUMROAD_PRODUCT_ID = "SK1dQ0zxuJ0Di7uxemo1Rw==";
 
 // Only this origin is allowed to call the worker — keeps it from being used
 // as a free generic Gumroad-verify proxy by anyone else. Update if the

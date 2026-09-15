@@ -91,7 +91,7 @@
 
     <div class="gate">
       <p>Enter the license key from your Gumroad receipt to unlock flashing.
-        Haven't bought it yet? <a href="#" id="buy-link">Get it here</a> first.</p>
+        Haven't bought it yet? <a href="https://whizworks.gumroad.com/l/twedq" id="buy-link">Get it here</a> first.</p>
       <div class="gate-row">
         <input type="text" id="license-input" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX"
                onkeydown="if(event.key==='Enter')verifyLicenseKey()">
@@ -140,7 +140,7 @@
   </div>
 
 <script>
-  const WORKER_URL = "PASTE_DEPLOYED_WORKER_URL_HERE";
+  const WORKER_URL = "https://digital-arcade-01.hafizmaiddin.workers.dev";
 
   async function verifyLicenseKey() {
     const input = document.getElementById('license-input');
